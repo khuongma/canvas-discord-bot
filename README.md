@@ -115,7 +115,15 @@ pip3.6 install discord
 
 Currently this is only for channels. Further updates will feature private messaging of the bot and a more scalable for any school and any body to use. As well as a more intuitive design.
 
-Documentation coming.
+1. Download the repo
+2. Replace these variables: 
+discord_bot_token = '' #bot token here
+canvas_channel = #discord channel id here
+canvas_api = token = '' #canvas api you generated from your account
+canvas_course_id = '' #course id found through the canvas api
+3. Run the python script
+
+Detailed documentation coming.
 
 
 
