@@ -151,15 +151,15 @@ Project Link: [https://github.com/khuongma/canvas-discord-bot](https://github.co
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 [contributors-shield]: https://img.shields.io/github/contributors/khuongma/repo.svg?style=flat-square
-[contributors-url]: https://github.com/khuongma/repo/graphs/contributors
+[contributors-url]: https://github.com/khuongma/canvas-discord-bot/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/khuongma/repo.svg?style=flat-square
-[forks-url]: https://github.com/khuongma/repo/network/members
+[forks-url]: https://github.com/khuongma/canvas-discord-bot/network/members
 [stars-shield]: https://img.shields.io/github/stars/khuongma/repo.svg?style=flat-square
-[stars-url]: https://github.com/khuongma/repo/stargazers
+[stars-url]: https://github.com/khuongma/canvas-discord-bot/stargazers
 [issues-shield]: https://img.shields.io/github/issues/khuongma/repo.svg?style=flat-square
-[issues-url]: https://github.com/khuongma/repo/issues
-[license-shield]: https://img.shields.io/github/license/khuongma/repo.svg?style=flat-square
-[license-url]: https://github.com/khuongma/repo/blob/master/LICENSE.txt
+[issues-url]: https://github.com/khuongma/canvas-discord-bot/issues
+[license-shield]: https://img.shields.io/github/license/khuongma/canvas-discord-bot.svg?style=flat-square
+[license-url]: https://github.com/khuongma/canvas-discord-bot/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/khuongma
 [product-screenshot]: images/screenshot.png
