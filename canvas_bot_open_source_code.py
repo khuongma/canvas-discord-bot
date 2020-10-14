@@ -30,7 +30,7 @@ def current_time():
     date = date.astimezone(timezone('US/Pacific'))
     pstDateTime=date.strftime(date_format)
     pstDateTime = datetime.strptime(pstDateTime, '%Y-%m-%d %I:%M:%S %p %Z')
-    return pstDateTimes
+    return pstDateTime
 
 def embed_function(Color, Name, result):
     embed = discord.Embed(color=Color)
