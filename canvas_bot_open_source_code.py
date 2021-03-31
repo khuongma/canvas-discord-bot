@@ -16,20 +16,20 @@ category = {
 
 }
 red, green, purple = 0x831000, 0x669d34, 0xb18cfe
-discord_bot_token = '' #bot token here
-canvas_channel = #discord channel id here
-canvas_api = token = '' #canvas api you generated from your account
+canvas_channel =  #discord channel id here
 canvas_course_id = '' #course id found through the canvas api
+discord_bot_token = '' #bot token here
+canvas_api = token = '' #canvas api you generated from your account
 
 def due_date(time):
-    return datetime.strptime(timezone('US/Pacific').normalize(datetime.strptime(time,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=utc).astimezone(timezone('US/Pacific'))).strftime('%Y-%m-%d %I:%M:%S %p %Z'), '%Y-%m-%d %I:%M:%S %p %Z')
+    return datetime.strptime(timezone('US/Pacific').normalize(datetime.strptime(time,"%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=utc).astimezone(timezone('US/Pacific'))).strftime('%Y-%m-%dT%I:%M:%SZ'), '%Y-%m-%dT%I:%M:%SZ')
 
 def current_time():
-    date_format='%Y-%m-%d %I:%M:%S %p %Z'
+    date_format='%Y-%m-%d %I:%M:%S'
     date = datetime.now(tz=utc)
     date = date.astimezone(timezone('US/Pacific'))
     pstDateTime=date.strftime(date_format)
-    pstDateTime = datetime.strptime(pstDateTime, '%Y-%m-%d %I:%M:%S %p %Z')
+    pstDateTime = datetime.strptime(pstDateTime, '%Y-%m-%d %I:%M:%S')
     return pstDateTime
 
 def embed_function(Color, Name, result):
@@ -39,7 +39,8 @@ def embed_function(Color, Name, result):
     return embed
 
 def call_canvas_api(category): #assignments, quizzes, discussion_topics
-    return requests.get('https://canvas.instructure.com/api/v1/courses/'+canvas_course_id+'/'+category+'?access_token='+canvas_api)
+    headers = {'Authorization': 'Bearer '+ token}
+    return requests.get('https://canvas.uw.edu/api/v1/courses/'+canvas_course_id+'/'+category, headers=headers)
 
 def get_category(category):
     result = ''
