@@ -118,9 +118,9 @@ Currently this is only for channels. Further updates will feature private messag
 1. Download the repo
 2. Replace these variables: 
 discord_bot_token = '' #bot token here
-canvas_channel = #discord channel id here
 canvas_api = token = '' #canvas api you generated from your account
-canvas_course_id = '' #course id found through the canvas api
+canvas_course_id = \[''\] #course id found through the canvas api
+<br> ** for multiple courses, format canvas_course_id as ['', '', ''] ex: ['1234567', '7654321', '4567890']**
 3. Run the python script
 
 Detailed documentation coming.
