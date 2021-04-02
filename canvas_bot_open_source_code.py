@@ -143,7 +143,5 @@ async def on_message(message):
             await channel.send(embed=embed_function(purple,cat[0][1:].upper(),send))
         else:
             await channel.send(embed=embed_function(red, 'Error', 'Please try again!'))
-    else:
-        await channel.send(embed=embed_function(red, 'Error', 'Please try again! or use command **!help**'))
 
 client.run(discord_bot_token)
