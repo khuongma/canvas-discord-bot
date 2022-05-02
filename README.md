@@ -150,7 +150,7 @@ Distributed under the GNU GENERAL PUBLIC LICENSE. See `LICENSE` for more informa
 <!-- CONTACT -->
 ## Contact
 
-Khuong Ma - khuongma@uw.edu
+Khuong Ma - khuongma@outlook.com
 
 Project Link: [https://github.com/khuongma/canvas-discord-bot](https://github.com/khuongma/canvas-discord-bot)
 
