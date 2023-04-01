@@ -16,8 +16,7 @@ category = {
 
 }
 red, green, purple = 0x831000, 0x669d34, 0xb18cfe
-canvas_channel =  #discord channel id here
-canvas_course_id = '' #course id found through the canvas api
+canvas_course_id = [''] #course id found through the canvas api
 discord_bot_token = '' #bot token here
 canvas_api = token = '' #canvas api you generated from your account
 
@@ -38,41 +37,82 @@ def embed_function(Color, Name, result):
     embed.set_author(name='...\t\tCANVAS BOT\t\t...')
     return embed
 
+def get_course_names():
+    course_names = []
+    for course in canvas_course_id:
+        headers = {'Authorization': 'Bearer '+ token}
+        course_names.append(requests.get('https://canvas.uw.edu/api/v1/courses/'+course, headers=headers).json()['name'])
+    return course_names
+
 def call_canvas_api(category): #assignments, quizzes, discussion_topics
-    headers = {'Authorization': 'Bearer '+ token}
-    return requests.get('https://canvas.uw.edu/api/v1/courses/'+canvas_course_id+'/'+category, headers=headers)
+    courses = []
+    for course in canvas_course_id:
+        headers = {'Authorization': 'Bearer '+ token}
+        courses.append(requests.get('https://canvas.uw.edu/api/v1/courses/'+course+'/'+category, headers=headers))
+    return courses
 
 def get_category(category):
     result = ''
-    type = call_canvas_api(category)
+    course_names = get_course_names()
+    api_response = call_canvas_api(category)
     name_title = 'title'
     if category == 'assignments':
         name_title = 'name'
-    for i in range(len(type.json())):
-        name = str(type.json()[i][name_title])
+    assignment_number = 0
+    for item in range(len(api_response)):
+        result += '**' + course_names[item] + '**\n'
         if 'discussion_topics' not in category:
-            due_at = due_date(type.json()[i]['due_at']) - current_time()
-            points_possible = str(type.json()[i]['points_possible']) + ' points possible'
-            result += str(i)+') *'+name+'* ['+points_possible+'] **due in '+str(due_at.days)+' day(s)**\n'
-        elif 'discussion_topics' in category:
-            result += str(i)+') *'+name+'*\n'
+            data = sorted(api_response[item].json(), key=lambda k : k['due_at'])
+        else:
+            data = sorted(api_response[item].json(), key=lambda k : k['created_at'])
+        for i in range(len(data)):
+            name = str(data[i][name_title])
+            if 'discussion_topics' not in category:
+                due_at = due_date(data[i]['due_at']) - current_time()
+                points_possible = str(data[i]['points_possible']) + ' points possible'
+                result += str(assignment_number)+') *'+name+'* ['+points_possible+'] **due in '+str(due_at.days)+' day(s)**\n'
+            elif 'discussion_topics' in category:
+                result += str(assignment_number)+') *'+name+'*\n'
+            assignment_number += 1
     return result+'\nCurrent datetime: **'+str(current_time())+'**'
+
+
+def get_assignment(api_response, index):
+    assignment_number = 0
+    for item in range(len(api_response)):
+        if 'discussion_topics' not in category:
+            data = sorted(api_response[item].json(), key=lambda k : k['due_at'])
+        else:
+            data = sorted(api_response[item].json(), key=lambda k : k['created_at'])
+        for i in range(len(data)):
+            if assignment_number == index:
+                return data[i]
+            assignment_number += 1
+
 
 def get_index(category, index):
     name_title = 'title'
     if category == 'assignments':
         name_title = 'name'
-    type = call_canvas_api(category)
+    api_response = call_canvas_api(category)
+    assignment = get_assignment(api_response, index)
     def get_cat(cat):
-        return type.json()[index][cat]
-    desc = get_cat('description')
+        return assignment[cat]
+    if 'discussion_topics' not in category:
+        desc = get_cat('description')
+    else:
+        desc = get_cat('message')
     desc = desc.encode("utf-8")
     desc = BeautifulSoup(desc).get_text()[0:900] + ' ...'
-    due_days = due_date(get_cat('due_at')) - current_time()
-    due_at = 'due at '+str(due_date(get_cat('due_at')))+'\nIN '+str(due_days.days)+' day(s)'
+    if 'discussion_topics' not in category:
+        due_days = due_date(get_cat('due_at')) - current_time()
+        due_at = 'due at '+str(due_date(get_cat('due_at')))+'\nIN '+str(due_days.days)+' day(s)'
+        points = str(get_cat('points_possible'))+' points possible'
     name = get_cat(name_title)
-    points = str(get_cat('points_possible'))+' points possible'
-    return name+' ['+points+']\n\n'+desc+'\n\n**'+due_at+'**'
+    if 'discussion_topics' not in category:
+        return name+' ['+points+']\n\n'+desc+'\n\n**'+due_at+'**'
+    else: 
+        return '**'+name+'**'+'\n\n'+desc
 
 client = discord.Client()
 
@@ -84,25 +124,24 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-    if message.channel.id == canvas_channel:
-        channel = client.get_channel(canvas_channel)
-        if message.content == '!help':
-            send = ''
-            for key, value in category.items():
-                send += value + '\n\n'
-            await channel.send(embed=embed_function(purple,'Useful commands',send))
-        elif message.content.startswith('!assignments') or message.content.startswith('!quizzes') or message.content.startswith('!discussion_topics'):
-            cat = message.content.split(' ')
-            print(cat)
-            send = get_category(cat[0][1:])
-            if len(cat) == 2:
-                send = get_index(cat[0][1:], int(cat[1]))
-                await channel.send(embed=embed_function(purple,message.content[1:].upper(),send))
-            elif len(cat) == 1:
-                await channel.send(embed=embed_function(purple,cat[0][1:].upper(),send))
-            else:
-                await channel.send(embed=embed_function(red, 'Error', 'Please try again!'))
+    channel = message.channel
+    if message.content == '!help':
+        send = ''
+        for key, value in category.items():
+            send += value + '\n\n'
+        await channel.send(embed=embed_function(purple,'Useful commands',send))
+    elif message.content.startswith('!assignments') or message.content.startswith('!quizzes') or message.content.startswith('!discussion_topics'):
+        cat = message.content.split(' ')
+        print(cat)
+        send = get_category(cat[0][1:])
+        if len(cat) == 2:
+            send = get_index(cat[0][1:], int(cat[1]))
+            await channel.send(embed=embed_function(purple,message.content[1:].upper(),send))
+        elif len(cat) == 1:
+            if len(send) > 1024:
+                send = send[:1021] + '...'
+            await channel.send(embed=embed_function(purple,cat[0][1:].upper(),send))
         else:
-            await channel.send(embed=embed_function(red, 'Error', 'Please try again! or use command **!help**'))
+            await channel.send(embed=embed_function(red, 'Error', 'Please try again!'))
 
 client.run(discord_bot_token)
